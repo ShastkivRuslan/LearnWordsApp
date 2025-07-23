@@ -40,9 +40,9 @@
         android:windowSoftInputMode="adjustResize"
         tools:targetApi="31">
 
-        <activity android:name=".ui.activities.AddWordActivity" />
+        <activity android:name=".presentation.ui.activities.AddWordActivity" />
         <activity android:name=".ui.activities.RepetitionActivity" />
-        <activity android:name=".ui.activities.PracticeActivity"/>
+        <activity android:name=".presentation.ui.activities.PracticeActivity"/>
         <activity android:name=".ui.activities.SettingsActivity"/>
         <activity android:name=".ui.activities.BubbleSettingsActivity"/>
 

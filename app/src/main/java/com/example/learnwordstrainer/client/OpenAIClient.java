@@ -36,27 +36,33 @@ public class OpenAIClient {
         service = retrofit.create(OpenAIAPI.class);
     }
 
-    public void fetchExamplesFromGPT(String word, Callback<ChatCompletionResponse> callback) {
+    public void fetchExamplesFromGPT(String input, Callback<ChatCompletionResponse> callback) {
         List<ChatCompletionRequest.Message> messages = new ArrayList<>();
-        messages.add(new ChatCompletionRequest.Message("system",
-                "Respond only with JSON: {translation:..., transcription:..., partOfSpeech:..., examples:[{sentence:..., translation:...}]}"));
+
+        messages.add(new ChatCompletionRequest.Message(
+                "system",
+                "You are a language assistant. Respond only with JSON in this format: " +
+                        "{translation: string, transcription: string, partOfSpeech: string, examples: [{sentence: string, translation: string}]}"
+        ));
+
         messages.add(new ChatCompletionRequest.Message(
                 "user",
                 String.format(
-                        "Word: %s Give part of speech, IPA transcription, 3 simple English sentences"
-                                + " + Ukrainian translations. JSON only.",
-                        word)
-                )
-        );
+                        "Word or phrase: \"%s\"\n" +
+                                "Return its part of speech, IPA transcription, translation to Ukrainian, and 3 simple English sentences that use this word or phrase in context with their Ukrainian translations.\n" +
+                                "Respond only with valid JSON without any explanation.",
+                        input)
+        ));
 
         ChatCompletionRequest request = new ChatCompletionRequest();
-        //request.setModel("gpt-3.5-turbo");
-        request.setModel("gpt-4.1-mini");
+        request.setModel("gpt-4o");
         request.setMessages(messages);
         request.setMaxTokens(250);
+        request.setResponseFormat(new ChatCompletionRequest.ResponseFormat("json_object"));
 
-        String authHeader = "Bearer " + BuildConfig.API_KEY;;
+        String authHeader = "Bearer " + BuildConfig.API_KEY;
 
         service.getChatCompletion(authHeader, request).enqueue(callback);
     }
+
 }
